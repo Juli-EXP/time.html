@@ -1,57 +1,41 @@
 <html>
 
 <head>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const calculate = () => {
-            const timeElements = []
-            timeElements.push(document.getElementById("t1"))
-            timeElements.push(document.getElementById("t2"))
-            timeElements.push(document.getElementById("t3"))
-
-            const workedElement = document.getElementById("worked")
-            const leftElement = document.getElementById("left")
-
-
+        const calculateTime = () => {
             const times = []
-            const now = new Date()
-            const workday = 8 * 60 * 60 * 1000
-            let diff1 = 0
-            let diff2 = 0
-            let worked = 0
-            let left = 0
+            times[0] = moment($("#time1").val(), "HH:mm")   //moment("08:00", "HH:mm")
+            times[1] = moment($("#time2").val(), "HH:mm")   //moment("12:00", "HH:mm")
+            times[2] = moment($("#time3").val(), "HH:mm")   //moment("13:15", "HH:mm")
+            times[3] = moment()
 
-            timeElements.forEach((e, i) => {
-                times.push(new Date("01/01/1970 " + timeElements[i].value))
-            })
+            const workday = moment("08:00", "HH:mm")
 
-            now.setSeconds(0)
-            now.setDate(1)
-            now.setMonth(0)
-            now.setFullYear(1970)
+            //Times are saved as strings
+            //UTC is only needed when you want to display a duration that is not tied to a current time
+            const timeWorked = moment.utc(times[1].diff(times[0]) + times[3].diff(times[2])).format("HH:mm")
+            const timeLeft = (moment(timeWorked, "HH:mm").diff(workday) < 0) ? moment.utc(moment(timeWorked, "HH:mm").diff(workday) * -1).format("HH:mm") : "00:00"
+            const timeEnd = moment(times[3].add(moment(timeLeft, "HH:mm").hours(), "h").add(moment(timeLeft, "HH:mm").minutes(), "m")).format("HH:mm")
 
-            diff1 = Math.abs(times[1] - times[0])   //Returns ms between times
-            diff2 = Math.abs(now - times[2])
-            worked = diff1 + diff2
-            left = Math.abs(workday - worked)
-
-
-            console.log(formatDate(worked))
-            console.log(formatDate(left))
-        }
-
-        const formatDate = (ms) => {
-            const h = Math.floor(ms / 1000 / 60 / 60);
-            const m = Math.floor((ms / 1000 / 60 / 60 - h) * 60);
-            const s = Math.floor(((ms / 1000 / 60 / 60 - h) * 60 - m) * 60);
-
-            // To get time format 00:00:00
-            const seconds = s < 10 ? `0${s}` : `${s}`;
-            const minutes = m < 10 ? `0${m}` : `${m}`;
-            const hours = h < 10 ? `0${h}` : `${h}`;
-
-            return `${hours}:${minutes}`;
+            $("#time_worked").html(timeWorked)
+            $("#time_left").html(timeLeft)
+            $("#time_end").html(timeEnd)
         }
     </script>
+
+    <style>
+        body {
+            font-family: "PT Sans", Calibri, Tahoma, sans-serif;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 
 
@@ -59,29 +43,42 @@
     <div style="display: flex; flex-direction: column; width: auto; padding: 0;">
         <div>
             <p>Kommen Vormittag</p>
-            <input type="time" id="t1">
+            <input type="time" id="time1">
         </div>
         <div>
             <p>Gehen Vormittag</p>
-            <input type="time" id="t2">
+            <input type="time" id="time2">
         </div>
         <div>
             <p>Kommen Nachmittag</p>
-            <input type="time" id="t3">
+            <input type="time" id="time3">
         </div>
     </div>
 
-    <button style="margin-top: 10px;" onclick="calculate()">Berechnen</button>
+    <button style="margin-top: 10px;" onclick="calculateTime()">Berechnen</button>
 
-    <div style="display: flex; flex-direction: row;">
-        <p>Gearbeitet: </p>
-        <p id="worked"></p>
+    <div>
+        <div style="display: flex; flex-direction: row; gap: 5px">
+            <p>Gearbeitet:</p>
+            <p id="time_worked"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 5px">
+            <p>Übrige Zeit:</p>
+            <p id="time_left"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 5px">
+            <p>Do konnsch gian:</p>
+            <p id="time_end"></p>
+        </div>
     </div>
 
-    <div style="display: flex; flex-direction: row;">
-        <p>Übrige Zeit: </p>
-        <p id="left"></p>
-    </div>
+    <footer>
+        <p>Author: Julian Lamprecht<br>
+            v1.0
+        </p>
+    </footer>
 </body>
 
 </html>
