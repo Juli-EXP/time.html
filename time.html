@@ -1,0 +1,87 @@
+<html>
+
+<head>
+    <script>
+        const calculate = () => {
+            const timeElements = []
+            timeElements.push(document.getElementById("t1"))
+            timeElements.push(document.getElementById("t2"))
+            timeElements.push(document.getElementById("t3"))
+
+            const workedElement = document.getElementById("worked")
+            const leftElement = document.getElementById("left")
+
+
+            const times = []
+            const now = new Date()
+            const workday = 8 * 60 * 60 * 1000
+            let diff1 = 0
+            let diff2 = 0
+            let worked = 0
+            let left = 0
+
+            timeElements.forEach((e, i) => {
+                times.push(new Date("01/01/1970 " + timeElements[i].value))
+            })
+
+            now.setSeconds(0)
+            now.setDate(1)
+            now.setMonth(0)
+            now.setFullYear(1970)
+
+            diff1 = Math.abs(times[1] - times[0])   //Returns ms between times
+            diff2 = Math.abs(now - times[2])
+            worked = diff1 + diff2
+            left = Math.abs(workday - worked)
+
+
+            console.log(formatDate(worked))
+            console.log(formatDate(left))
+        }
+
+        const formatDate = (ms) => {
+            const h = Math.floor(ms / 1000 / 60 / 60);
+            const m = Math.floor((ms / 1000 / 60 / 60 - h) * 60);
+            const s = Math.floor(((ms / 1000 / 60 / 60 - h) * 60 - m) * 60);
+
+            // To get time format 00:00:00
+            const seconds = s < 10 ? `0${s}` : `${s}`;
+            const minutes = m < 10 ? `0${m}` : `${m}`;
+            const hours = h < 10 ? `0${h}` : `${h}`;
+
+            return `${hours}:${minutes}`;
+        }
+    </script>
+</head>
+
+
+<body>
+    <div style="display: flex; flex-direction: column; width: auto; padding: 0;">
+        <div>
+            <p>Kommen Vormittag</p>
+            <input type="time" id="t1">
+        </div>
+        <div>
+            <p>Gehen Vormittag</p>
+            <input type="time" id="t2">
+        </div>
+        <div>
+            <p>Kommen Nachmittag</p>
+            <input type="time" id="t3">
+        </div>
+    </div>
+
+    <button style="margin-top: 10px;" onclick="calculate()">Berechnen</button>
+
+    <div style="display: flex; flex-direction: row;">
+        <p>Gearbeitet: </p>
+        <p id="worked"></p>
+    </div>
+
+    <div style="display: flex; flex-direction: row;">
+        <p>Übrige Zeit: </p>
+        <p id="left"></p>
+    </div>
+</body>
+
+</html>
