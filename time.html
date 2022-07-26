@@ -12,12 +12,15 @@
             times[3] = moment()
 
             const workday = moment("08:00", "HH:mm")
+            const overtimeStart = moment("08:31", "HH:mm")
 
             //Times are saved as strings
             //UTC is only needed when you want to display a duration that is not tied to a current time
             const timeWorked = moment.utc(times[1].diff(times[0]) + times[3].diff(times[2])).format("HH:mm")
             const timeLeft = (moment(timeWorked, "HH:mm").diff(workday) < 0) ? moment.utc(moment(timeWorked, "HH:mm").diff(workday) * -1).format("HH:mm") : "00:00"
             const timeEnd = moment(times[3].add(moment(timeLeft, "HH:mm").hours(), "h").add(moment(timeLeft, "HH:mm").minutes(), "m")).format("HH:mm")
+            const timeUntilOvertime = 0
+            const gainedOvertime = 0
 
             $("#time_worked").html(timeWorked)
             $("#time_left").html(timeLeft)
@@ -71,6 +74,16 @@
         <div style="display: flex; flex-direction: row; gap: 5px">
             <p>Do konnsch gian:</p>
             <p id="time_end"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 5px">
+            <p>Ob do krigsch Zeitkonto:</p>
+            <p id="time_until_overtime"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 5px">
+            <p>Soffl Zeitkonto krigsche:</p>
+            <p id="gained_overtime"></p>
         </div>
     </div>
 
